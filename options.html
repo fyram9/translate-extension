@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="options.css">
+  <title>AI Translate — Settings</title>
+</head>
+<body>
+  <div class="container">
+    <h1>AI Translate Settings</h1>
+
+    <section>
+      <label for="targetLang">Target language</label>
+      <select id="targetLang"></select>
+      <p class="hint">The AI detects the source language automatically and translates into this language.</p>
+    </section>
+
+    <section>
+      <label for="apiKey">OpenRouter API key</label>
+      <input type="password" id="apiKey" placeholder="sk-or-v1-..." autocomplete="off" spellcheck="false">
+      <p class="hint">
+        <a href="https://openrouter.ai/keys" target="_blank" rel="noreferrer">Get an API key</a>.
+        Stored locally in your browser. Free models have rate limits (about 50 req/day on a free account).
+      </p>
+    </section>
+
+    <section>
+      <label for="model">AI model</label>
+      <select id="model"></select>
+      <input type="text" id="customModel" class="hidden" placeholder="e.g. openrouter/free" spellcheck="false">
+      <p class="hint">Choose a preset or pick &ldquo;Custom&hellip;&rdquo; to type any OpenRouter model ID.</p>
+    </section>
+
+    <div class="actions">
+      <button id="saveBtn">Save</button>
+      <span id="savedMsg" class="hidden">Saved ✓</span>
+    </div>
+  </div>
+  <script src="options.js"></script>
+</body>
+</html>
