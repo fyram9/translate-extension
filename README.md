@@ -39,6 +39,10 @@ npx web-ext build # package the extension
 - Firefox 140+ (desktop)
 - An OpenRouter account and API key (free models work with no credits; free accounts are rate-limited to ~50 requests/day)
 
+## Privacy
+
+Selected text is sent to [OpenRouter](https://openrouter.ai) only when you click **Translate selection**. Settings (API key, language, model) are stored locally via `browser.storage.local`. No analytics. See [PRIVACY.md](PRIVACY.md).
+
 ## Files
 
 ```
@@ -46,5 +50,6 @@ manifest.json      MV3 manifest
 background.js      Context menu + popup window
 translate.html/css/js  Streaming translation popup
 options.html/css/js    Settings page
-icons/icon.svg     Extension icon
+icons/icon-*.png   Extension icons (48/96/128), source: icons/icon.svg
+PRIVACY.md         Privacy policy
 ```

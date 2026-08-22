@@ -4,8 +4,9 @@
   "version": "1.0.0",
   "description": "Translate selected text with AI via OpenRouter. Right-click any selected text and choose 'Translate selection'.",
   "icons": {
-    "48": "icons/icon.svg",
-    "96": "icons/icon.svg"
+    "48": "icons/icon-48.png",
+    "96": "icons/icon-96.png",
+    "128": "icons/icon-128.png"
   },
   "background": {
     "scripts": ["background.js"]
