@@ -1,0 +1,27 @@
+{
+  "name": "translate-extension",
+  "version": "1.0.0",
+  "description": "A Firefox extension for translating selected text with AI via [OpenRouter](https://openrouter.ai). Right-click any selected text and choose **Translate selection** — the translation streams into a separate popup window, without modifying the page.",
+  "main": "background.js",
+  "scripts": {
+    "lint": "addons-linter . --output text --ignore-files node_modules/**",
+    "lint:amo": "web-ext build --overwrite-dest && addons-linter web-ext-artifacts/*.zip",
+    "build": "web-ext build --overwrite-dest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fyram9/translate-extension.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/fyram9/translate-extension/issues"
+  },
+  "homepage": "https://github.com/fyram9/translate-extension#readme",
+  "devDependencies": {
+    "addons-linter": "^10.13.0",
+    "web-ext": "^10.7.0"
+  }
+}
