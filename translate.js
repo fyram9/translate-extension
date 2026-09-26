@@ -17,11 +17,27 @@ function showError(msg) {
   retryBtn.classList.remove("hidden");
 }
 
-async function streamTranslate({ text, targetLang, model, apiKey }) {
+async function streamTranslate({ text, targetLang, model, modelPrefs, apiKey }) {
   const systemPrompt =
     "You are a translation engine. Translate the user's text into " +
     targetLang +
     ". Output only the translation. Do not add any explanation, commentary, notes, or quotation marks. Preserve the original meaning, tone, and formatting as closely as possible.";
+
+  const requestBody = {
+    model,
+    stream: true,
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: text },
+    ],
+  };
+
+  if (modelPrefs?.provider) {
+    requestBody.provider = {
+      order: [modelPrefs.provider],
+      allow_fallbacks: false,
+    };
+  }
 
   const resp = await fetch(API_URL, {
     method: "POST",
@@ -29,14 +45,7 @@ async function streamTranslate({ text, targetLang, model, apiKey }) {
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      model,
-      stream: true,
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: text },
-      ],
-    }),
+    body: JSON.stringify(requestBody),
   });
 
   if (!resp.ok) {
@@ -111,15 +120,17 @@ async function run() {
     }
 
     const targetLang = pendingTranslation.targetLang || "English";
-    const model = pendingTranslation.model || "openrouter/free";
+    const model = pendingTranslation.model || "deepseek/deepseek-v4.1-flash";
+    const modelPrefs = pendingTranslation.modelPrefs || {};
 
-    infoEl.textContent = `→ ${targetLang} · ${model}`;
+    infoEl.textContent = `→ ${targetLang} · ${model}${modelPrefs?.provider ? " · " + modelPrefs.provider : ""}`;
     statusEl.textContent = "Translating…";
 
     const result = await streamTranslate({
       text: pendingTranslation.text,
       targetLang,
       model,
+      modelPrefs,
       apiKey,
     });
 

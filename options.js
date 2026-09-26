@@ -22,16 +22,15 @@ const LANGUAGES = [
 ];
 
 const MODELS = [
-  { id: "openrouter/free", label: "OpenRouter Free (auto-select)" },
-  { id: "deepseek/deepseek-v4-flash", label: "DeepSeek V4 Flash (cheap)" },
-  { id: "deepseek/deepseek-v4-flash-0731", label: "DeepSeek V4 Flash 0731" },
-  { id: "meta-llama/llama-3.3-70b-instruct:free", label: "Llama 3.3 70B (free)" },
-  { id: "google/gemma-4-31b-it:free", label: "Gemma 4 31B (free)" },
-  { id: "nvidia/nemotron-3-nano-30b-a3b:free", label: "Nemotron 3 Nano 30B (free)" },
+  { id: "deepseek/deepseek-v4.1-flash", label: "DeepSeek V4.1 Flash", provider: "deepseek" },
+  { id: "xiaomi/mimo-v2.6-flash", label: "MiMo 2.6 Flash (Xiaomi)", provider: "xiaomi" },
+  { id: "qwen/qwen3.7-flash", label: "Qwen 3.7 Flash (Alibaba Cloud)", provider: "alibaba" },
   { id: "__custom__", label: "Custom…" },
 ];
 
 const CUSTOM_VALUE = "__custom__";
+
+const modelPrefs = new Map();
 
 const langSelect = document.getElementById("targetLang");
 const apiKeyInput = document.getElementById("apiKey");
@@ -58,28 +57,44 @@ function updateCustomVisibility() {
   customModel.classList.toggle("hidden", modelSelect.value !== CUSTOM_VALUE);
 }
 
-modelSelect.addEventListener("change", updateCustomVisibility);
+modelSelect.addEventListener("change", () => {
+  const meta = MODELS.find((m) => m.id === modelSelect.value);
+  if (meta?.provider) modelPrefs.set(modelSelect.value, { provider: meta.provider });
+  updateCustomVisibility();
+});
 
 async function load() {
-  const saved = await browser.storage.local.get(["targetLang", "apiKey", "model"]);
+  const saved = await browser.storage.local.get([
+    "targetLang",
+    "apiKey",
+    "model",
+    "modelPrefs",
+  ]);
 
   if (saved.targetLang) langSelect.value = saved.targetLang;
 
   apiKeyInput.value = saved.apiKey || "";
 
-  const known = MODELS.find((m) => m.id === saved.model);
-  if (known && known.id !== CUSTOM_VALUE) {
-    modelSelect.value = saved.model;
+  for (const [id, pref] of Object.entries(saved.modelPrefs || {})) {
+    modelPrefs.set(id, pref);
+  }
+
+  const savedMeta = MODELS.find((m) => m.id === saved.model);
+  if (savedMeta) {
+    modelSelect.value = savedMeta.id;
+    modelPrefs.set(savedMeta.id, { provider: savedMeta.provider });
   } else if (saved.model) {
     modelSelect.value = CUSTOM_VALUE;
     customModel.value = saved.model;
   } else {
-    modelSelect.value = "openrouter/free";
+    modelSelect.value = MODELS[0].id;
   }
   updateCustomVisibility();
 }
 
 saveBtn.addEventListener("click", async () => {
+  const meta = MODELS.find((m) => m.id === modelSelect.value);
+  if (meta?.provider) modelPrefs.set(meta.id, { provider: meta.provider });
   const model =
     modelSelect.value === CUSTOM_VALUE ? customModel.value.trim() : modelSelect.value;
 
@@ -93,6 +108,7 @@ saveBtn.addEventListener("click", async () => {
     targetLang: langSelect.value,
     apiKey: apiKeyInput.value.trim(),
     model,
+    modelPrefs: Object.fromEntries(modelPrefs),
   });
 
   savedMsg.classList.remove("hidden");
