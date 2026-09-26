@@ -47,9 +47,17 @@ header {
 }
 
 #info {
+  margin-top: 2px;
+}
+
+#info, #finishInfo {
   color: var(--muted);
   font-size: 12px;
+}
+
+#finishInfo {
   margin-top: 2px;
+  text-align: right;
 }
 
 main {
